@@ -11,6 +11,7 @@ class OdeArgs:
         self.gam2 = None
         self.t0 = None
         self.tn = None
+        self.__At = None
 
     def set_s1(self, s1):
         print('S1 is set to: ' + str(s1))
@@ -85,5 +86,21 @@ class OdeArgs:
         print('tn is set to: ' + str(tn))
         self.tn = tn
 
+    def set_at(self, at):
+        self.__At = at
 
-
+    def get_at(self, x, y):
+        at_dictionary = {
+            'A1(t)': self.get_k1() / (self.get_k1() + self.get_k2()),
+            'A2(t)': x / (x + y),
+            'A3(t)': self.get_k1() ** self.get_alp1() / (
+                        self.get_k1() ** self.get_alp1() + self.get_k2() ** self.get_alp2()),
+            'A4(t)': x ** self.get_alp1() / (x ** self.get_alp1() + y ** self.get_alp2()),
+            'A5(t)': self.get_alp1() / (self.get_alp1() + self.get_alp2())
+        }
+        if self.__At is None:
+            print('at returned is: A1(t)')
+            return at_dictionary['A1(t)']
+        else:
+            print('at = '+str(at_dictionary[self.__At]))
+            return at_dictionary[self.__At]

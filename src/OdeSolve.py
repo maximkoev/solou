@@ -1,54 +1,53 @@
 import numpy as np
 from scipy.integrate import odeint
+import matplotlib.pyplot as plt
 from model import OdeArgs
 
 
 # function that returns dz/dt
 
 
-
 class OdeSolve():
 
     def __init__(self, args: OdeArgs.OdeArgs):
-        self.s1 = args.get_s1()
-        self.s2 = args.get_s2()
-        self.k1 = args.get_k1()
-        self.k2 = args.get_k2()
-        self.alp1 = args.get_alp1()
-        self.alp2 = args.get_alp2()
-        self.gam1 = args.get_gam1()
-        self.gam2 = args.get_gam2()
-        self.t0 = args.get_t0()
-        self.tn = args.get_tn()
+        self.__s1 = args.get_s1()
+        self.__s2 = args.get_s2()
+        self.__k1 = args.get_k1()
+        self.__k2 = args.get_k2()
+        self.__alp1 = args.get_alp1()
+        self.__alp2 = args.get_alp2()
+        self.__gam1 = args.get_gam1()
+        self.__gam2 = args.get_gam2()
+        self.__result = None
+        self.__timeline = np.linspace(args.get_t0(), args.get_tn(), 4, True)
+        self.__At = lambda x,y: args.get_at(x,y)
 
     def model(self, z, t):
         print('model is initialized')
         x = z[0]
         y = z[1]
-        print('mode s1 = '+str(self.s1))
-        dxdt = (x / (x + y)) * ((self.s1 * x ** self.alp1 + self.s2 * y ** self.alp2) - self.gam1 * x)
-        dydt = (1 - (x / (x + y))) * ((self.s1 * x ** self.alp1 + self.s2 * y ** self.alp2) - self.gam2 * y)
-        return [dxdt, dydt]
 
+        print('mode s1 = ' + str(self.__s1))
+        dxdt = self.__At(x, y) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
+        dydt = (1 - self.__At(x, y)) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
+        return [dxdt, dydt]
 
     def calc(self):
         print('calc method is initialized')
         # initial condition
-        z0 = [self.k1, self.k2]
-        # time points
-        t = np.linspace(self.t0, self.tn, 4, True)
-        print('=======================================')
-        print(t)
-        print('=======================================')
-        # solve ODE
-        z = odeint(self.model, z0, t)
-        return z
+        z0 = [self.__k1, self.__k2]
+        _AT = self.__At(self.__k1, self.__k2)
+        self.__result = odeint(self.model, z0, self.__timeline)
+        print(self.__result)
+        return self.__result
 
+    def getTimeline(self):
+        return self.__timeline
 
-# plot results
-# plt.plot(t,z[:,0],'b-',label=r'$\frac{dx}{dt}=3 \; \exp(-t)$')
-# plt.plot(t,z[:,1],'r--',label=r'$\frac{dy}{dt}=-y+3$')
-# plt.ylabel('response')
-# plt.xlabel('time')
-# plt.legend(loc='best')
-# plt.show()
+    def buildPlot(self):
+        plt.plot(self.__timeline, self.__result[:, 0], 'b-', label=r'$\frac{dx}{dt}=3 \; \exp(-t)$')
+        plt.plot(self.__timeline, self.__result[:, 1], 'r--', label=r'$\frac{dy}{dt}=-y+3$')
+        plt.ylabel('response')
+        plt.xlabel('time')
+        plt.legend(loc='best')
+        plt.show()
