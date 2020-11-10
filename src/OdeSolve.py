@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-from model import OdeArgs
+from model.OdeArgs import OdeArgs
 
 
 # function that returns dz/dt
@@ -9,7 +9,7 @@ from model import OdeArgs
 
 class OdeSolve():
 
-    def __init__(self, args: OdeArgs.OdeArgs):
+    def __init__(self, args: OdeArgs):
         self.__s1 = args.get_s1()
         self.__s2 = args.get_s2()
         self.__k1 = args.get_k1()
@@ -19,26 +19,28 @@ class OdeSolve():
         self.__gam1 = args.get_gam1()
         self.__gam2 = args.get_gam2()
         self.__result = None
-        self.__timeline = np.linspace(args.get_t0(), args.get_tn(), 4, True)
-        self.__At = lambda x,y: args.get_at(x,y)
+        self.__timeline = args.get_timeline()
+        self.__At = lambda x, y: args.get_at(x, y)
 
-    def model(self, z, t):
+    def model45(self, z, t):
         print('model is initialized')
         x = z[0]
         y = z[1]
 
-        print('mode s1 = ' + str(self.__s1))
-        dxdt = self.__At(x, y) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
-        dydt = (1 - self.__At(x, y)) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
+        dxdt = self._AT * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
+        dydt = (1 - self._AT) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
         return [dxdt, dydt]
 
     def calc(self):
         print('calc method is initialized')
         # initial condition
         z0 = [self.__k1, self.__k2]
-        _AT = self.__At(self.__k1, self.__k2)
-        self.__result = odeint(self.model, z0, self.__timeline)
+        self._AT = self.__At(self.__k1, self.__k2)
+        print(f"timeline is: {self.__timeline}")
+        self.__result = odeint(self.model45, z0, self.__timeline)
+        print("===================result===================")
         print(self.__result)
+        print("=============================================")
         return self.__result
 
     def getTimeline(self):
@@ -51,3 +53,5 @@ class OdeSolve():
         plt.xlabel('time')
         plt.legend(loc='best')
         plt.show()
+
+
