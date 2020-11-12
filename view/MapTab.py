@@ -53,6 +53,7 @@ class MapTab(Tab):
 
     def onCalc(self):
         __result = 0
+        self.map_accumulator.clear()
         self.__redraw_table()
         self.__calculate()
         for argument in self.__set_fixed_arguments_list:
@@ -121,9 +122,8 @@ class MapTab(Tab):
 
     def onBuildMap(self):
         try:
-            mp = MapTable(self.map_accumulator)
-            mp.show()
-            mp.window().__init__(self.map_accumulator)
+            self.mp = MapTable(self.map_accumulator)
+            self.mp.show()
         except BaseException as e:
             print(e)
 

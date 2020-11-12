@@ -1,5 +1,7 @@
+import sys
+
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QTableWidget, QGridLayout, QWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QTableWidget, QGridLayout, QWidget, QTableWidgetItem, QApplication
 
 
 class MapTable(QWidget):
@@ -7,21 +9,20 @@ class MapTable(QWidget):
         super().__init__()
         self.acc = accumulator
         self.setMinimumSize(QSize(1100, 800))  # Устанавливаем размеры
-        self.setWindowTitle("Работа с QTableWidget")  # Устанавливаем заголовок окна
+        self.setWindowTitle("Map")  # Устанавливаем заголовок окна
         central_widget = QWidget(self)  # Создаём центральный виджет
 
-        grid_layout = QGridLayout()  # Создаём QGridLayout
-        central_widget.setLayout(grid_layout)  # Устанавливаем данное размещение в центральный виджет
+        grid_layout = QGridLayout()
+        central_widget.setLayout(grid_layout)
 
-        self.table = QTableWidget(self)  # Создаём таблицу
+        self.table = QTableWidget(self)
         self.table.setMinimumSize(1100, 800)
-        self.table.setColumnCount(10)  # Устанавливаем три колонки
-        self.table.setRowCount(10)  # и одну строку в таблице
-        self.table.setItem(0, 0, QTableWidgetItem("test item"))
+        self.table.setColumnCount(10)
+        self.table.setRowCount(10)
         self.table.setHorizontalHeaderLabels(["0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
         self.table.setVerticalHeaderLabels(["0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
 
-        grid_layout.addWidget(self.table, 0, 0)  # Добавляем таблицу в сетку
+        grid_layout.addWidget(self.table, 0, 0)
         self.fillout()
 
     def fillout(self):

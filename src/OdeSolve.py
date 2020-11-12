@@ -23,19 +23,18 @@ class OdeSolve():
         self.__At = lambda x, y: args.get_at(x, y)
 
     def model45(self, z, t):
-        print('model is initialized')
+        print(f'Model initialized with z = {z}, t = {t}')
         x = z[0]
         y = z[1]
 
-        dxdt = self._AT * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
-        dydt = (1 - self._AT) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
+        dxdt = self.__At(x, y) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
+        dydt = (1 - self.__At(x, y)) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
         return [dxdt, dydt]
 
     def calc(self):
         print('calc method is initialized')
         # initial condition
         z0 = [self.__k1, self.__k2]
-        self._AT = self.__At(self.__k1, self.__k2)
         print(f"timeline is: {self.__timeline}")
         self.__result = odeint(self.model45, z0, self.__timeline)
         print("===================result===================")
@@ -53,5 +52,3 @@ class OdeSolve():
         plt.xlabel('time')
         plt.legend(loc='best')
         plt.show()
-
-

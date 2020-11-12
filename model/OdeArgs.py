@@ -100,9 +100,6 @@ class OdeArgs:
     def set_at(self, at):
         self.__At = at
 
-    def __at_dictionary(self, x, y):
-        return
-
     def get_at(self, x, y):
         if self.__At is None:
             raise ValueError('A(t) method is not defined')
@@ -119,4 +116,3 @@ class OdeArgs:
 
     def get_at_keys(self):
         return ['A1(t)', 'A2(t)', 'A3(t)', 'A4(t)', 'A5(t)']
-
