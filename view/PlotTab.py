@@ -1,4 +1,5 @@
 # from UI.mainView import Ui_MainWindow
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QTableWidgetItem
 
 from model.OdeArgs import OdeArgs
@@ -9,12 +10,10 @@ from view.Tab import Tab
 class PlotTab(Tab):
     def __init__(self, ui):
         super().__init__(OdeArgs(), ui)
-        print(type(ui))
-        self.ui.pushButton.setEnabled(False)
-        self.ui.pushButton_2.setEnabled(False)
+        self.__disableValuesOnStart()
         self.ui.pushButton.clicked.connect(self.onCalc)
         self.ui.pushButton_2.clicked.connect(self.onBuildPlot)
-        self.ui.pushButton_3.clicked.connect(self.onExportClick)
+#        self.ui.pushButton_3.clicked.connect(self.onExportClick)
         self.ui.S1.textChanged[str].connect(self.onS1Change)
         self.ui.S2.textChanged[str].connect(self.onS2Change)
         self.ui.alp1.textChanged[str].connect(self.onAlp1Change)
@@ -25,6 +24,9 @@ class PlotTab(Tab):
         self.ui.K2.textChanged[str].connect(self.onK2Change)
         self.ui.t0.textChanged[str].connect(self.onT0Change)
         self.ui.tn.textChanged[str].connect(self.onTnChange)
+        self.ui.STP.textChanged[str].connect(self.onSTPChange)
+        self.ui.STP_checkbox.stateChanged.connect(self.onSTPCheckbox)
+
 
     def onBuildPlot(self):
         try:
@@ -58,3 +60,17 @@ class PlotTab(Tab):
         self.ui.pushButton_2.setEnabled(True)
         self.ui.tableWidget.setHorizontalHeaderLabels(['t', 'K1', 'K2', 'K1+K2'])
         self.ui.tableWidget.resizeColumnsToContents()
+
+    def __disableValuesOnStart(self):
+        self.ui.pushButton.setDisabled(True)
+        self.ui.pushButton_2.setDisabled(True)
+        self.ui.STP.setDisabled(True)
+
+    def onSTPChange(self, text):
+        self.onChange(text, self.args.set_STP)
+
+    def onSTPCheckbox(self, state):
+        if state == Qt.Checked:
+            self.ui.STP.setEnabled(True)
+        else:
+            self.ui.STP.setDisabled(True)

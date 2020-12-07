@@ -14,7 +14,7 @@ class MapTab(Tab):
         super().__init__(OdeArgs(), ui)
         self.ui = ui
         self.chbCount = 0
-        self.disableAllGamAlp()
+        self.__disableValuesOnStart()
         self.ui.S1_2.textChanged[str].connect(self.onS1Change)
         self.ui.S2_2.textChanged[str].connect(self.onS2Change)
         self.ui.alp1_2.textChanged[str].connect(self.onAlp1Change)
@@ -24,15 +24,15 @@ class MapTab(Tab):
         self.ui.K1_2.textChanged[str].connect(self.onK1Change)
         self.ui.K2_2.textChanged[str].connect(self.onK2Change)
         self.ui.tn_2.textChanged[str].connect(self.onTnChange)
-        self.ui.t0_2.setDisabled(True)
+        self.ui.STP_2.textChanged[str].connect(self.onSTPChange)
         self.ui.alp1_chb.stateChanged.connect(self.onChb)
         self.ui.alp2_chb.stateChanged.connect(self.onChb)
         self.ui.gam2_chb.stateChanged.connect(self.onChb)
         self.ui.gam1_chb.stateChanged.connect(self.onChb)
-        self.ui.calc_mapper.setDisabled(True)
+        self.ui.STP_checkbox_2.stateChanged.connect(self.onSTPCheckbox)
         self.ui.calc_mapper.clicked.connect(self.onCalc)
         self.ui.build_map.clicked.connect(self.onBuildMap)
-        self.ui.build_map.setDisabled(True)
+
         self.alp_gam_array = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
         self.__set_fixed_arguments_list = []
         self.map_accumulator = []
@@ -45,7 +45,7 @@ class MapTab(Tab):
         if self.chbCount == 2:
             self.enableNotSelected()
         else:
-            self.disableAllGamAlp()
+            self.__disableValuesOnStart()
 
     def onTnChange(self, text):
         self.onChange(text, self.args.set_t0)
@@ -54,6 +54,7 @@ class MapTab(Tab):
     def onCalc(self):
         __result = 0
         self.map_accumulator.clear()
+        self.ui.map_table.clear()
         self.__redraw_table()
         self.__calculate()
         for argument in self.__set_fixed_arguments_list:
@@ -76,11 +77,23 @@ class MapTab(Tab):
                 self.__set_fixed_arguments_list.append(checkbox["set"])
                 self.__fixed_arguments_names.append(checkbox["name"])
 
-    def disableAllGamAlp(self):
+    def __disableValuesOnStart(self):
+        self.ui.STP_2.setDisabled(True)
         self.ui.gam2_2.setDisabled(True)
         self.ui.gam1_2.setDisabled(True)
         self.ui.alp2_2.setDisabled(True)
         self.ui.alp1_2.setDisabled(True)
+        self.ui.t0_2.setDisabled(True)
+        self.ui.calc_mapper.setDisabled(True)
+        self.ui.build_map.setDisabled(True)
+
+    def onSTPChange(self, text):
+        self.onChange(text, self.args.set_STP)
+
+    def onSTPCheckbox(self, state):
+        if state == Qt.Checked:
+            self.ui.STP_2.setDisabled(False)
+        else: self.ui.STP_2.setDisabled(True)
 
     def __calculate(self, ):
         __row = 0
@@ -128,13 +141,3 @@ class MapTab(Tab):
             print(e)
 
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'

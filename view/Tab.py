@@ -1,3 +1,5 @@
+from PyQt5 import QtGui
+
 from model.OdeArgs import OdeArgs
 
 
@@ -5,6 +7,10 @@ class Tab:
     def __init__(self, args: OdeArgs, ui):
         self.args = args
         self.ui = ui
+        self.ui.label_24.setPixmap(QtGui.QPixmap("../UI/source/sys.png"))
+        self.ui.label_25.setPixmap(QtGui.QPixmap("../UI/source/at.png"))
+        self.ui.label_26.setPixmap(QtGui.QPixmap("../UI/source/sys.png"))
+        self.ui.label_27.setPixmap(QtGui.QPixmap("../UI/source/at.png"))
 
 
     def onS1Change(self, text):
@@ -37,25 +43,19 @@ class Tab:
             func(float(text))
             self.checkOnEdit()
         except BaseException as e:
-            print('Error on value parsing: ',e)
+            print('Error on value parsing: ', e)
 
     def checkOnEdit(self):
         args = [self.args.get_tn(), self.args.get_t0(), self.args.get_s1(), self.args.get_s2(), self.args.get_k1(),
                 self.args.get_k2(), self.args.get_alp2(), self.args.get_alp1(), self.args.get_gam1(),
-                self.args.get_gam2()]
+                self.args.get_gam2(), self.args.get_STP()]
         _i = 0
         for arg in args:
             if arg is not None:
                 _i = _i + 1
 
-        if _i == 10:
-            print('trace')
-            print(self.__class__.__name__)
-            print('==============================')
+        if _i == len(args):
             if self.__class__.__name__ == "MapTab":
                 self.ui.calc_mapper.setEnabled(True)
             else:
                 self.ui.pushButton.setEnabled(True)
-
-
-

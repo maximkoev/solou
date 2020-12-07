@@ -4,10 +4,7 @@ import matplotlib.pyplot as plt
 from model.OdeArgs import OdeArgs
 
 
-# function that returns dz/dt
-
-
-class OdeSolve():
+class OdeSolve:
 
     def __init__(self, args: OdeArgs):
         self.__s1 = args.get_s1()
@@ -21,21 +18,22 @@ class OdeSolve():
         self.__result = None
         self.__timeline = args.get_timeline()
         self.__At = lambda x, y: args.get_at(x, y)
+        self.__delta = args.get_STP()
 
     def model45(self, z, t):
-        print(f'Model initialized with z = {z}, t = {t}')
+        print(f'Model initialized with z = {z}, t = {t}, stp = {self.stp(t)}')
         x = z[0]
         y = z[1]
 
-        dxdt = self.__At(x, y) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
-        dydt = (1 - self.__At(x, y)) * ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
-        return [dxdt, dydt]
+        k1 = self.__At(x, y) * self.stp(t) * \
+             ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam1 * x)
+        k2 = (1 - self.__At(x, y)) * self.stp(t) * \
+             ((self.__s1 * x ** self.__alp1 + self.__s2 * y ** self.__alp2) - self.__gam2 * y)
+        return [k1, k2]
 
     def calc(self):
-        print('calc method is initialized')
-        # initial condition
         z0 = [self.__k1, self.__k2]
-        print(f"timeline is: {self.__timeline}")
+        #print(f"timeline is: {self.__timeline}")
         self.__result = odeint(self.model45, z0, self.__timeline)
         print("===================result===================")
         print(self.__result)
@@ -46,9 +44,12 @@ class OdeSolve():
         return self.__timeline
 
     def buildPlot(self):
-        plt.plot(self.__timeline, self.__result[:, 0], 'b-', label=r'$\frac{dx}{dt}=3 \; \exp(-t)$')
-        plt.plot(self.__timeline, self.__result[:, 1], 'r--', label=r'$\frac{dy}{dt}=-y+3$')
+        plt.plot(self.__timeline, self.__result[:, 0], 'b-', label='K1')
+        plt.plot(self.__timeline, self.__result[:, 1], 'r--', label='K2')
         plt.ylabel('response')
         plt.xlabel('time')
         plt.legend(loc='best')
         plt.show()
+
+    # Calculate scientific and technical progress
+    stp = lambda self, t: np.exp(t * self.__delta)

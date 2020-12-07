@@ -1,16 +1,26 @@
-import sys
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QTableWidget, QGridLayout, QWidget, QTableWidgetItem
 
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QTableWidget, QGridLayout, QWidget, QTableWidgetItem, QApplication
+
+def getBgColor(func_name: str):
+    colors_dict = {
+        "A1(t)": QColor(255, 255, 255),
+        "A2(t)": QColor(204, 255, 255),
+        "A3(t)": QColor(255, 255, 204),
+        "A4(t)": QColor(205, 255, 204),
+        "A5(t)": QColor(255, 204, 204),
+    }
+    return colors_dict[func_name]
 
 
 class MapTable(QWidget):
     def __init__(self, accumulator):
         super().__init__()
         self.acc = accumulator
-        self.setMinimumSize(QSize(1100, 800))  # Устанавливаем размеры
-        self.setWindowTitle("Map")  # Устанавливаем заголовок окна
-        central_widget = QWidget(self)  # Создаём центральный виджет
+        self.setMinimumSize(QSize(1100, 800))
+        self.setWindowTitle("Map")
+        central_widget = QWidget(self)
 
         grid_layout = QGridLayout()
         central_widget.setLayout(grid_layout)
@@ -40,6 +50,8 @@ class MapTable(QWidget):
                     max_value = value
                     max_key = key
             self.table.setItem(i, j, QTableWidgetItem(str(max_key)))
+            self.table.item(i, j).setBackground(getBgColor(str(max_key)))
+            self.table.item(i, j).setToolTip(f"[{row[0][0]} = {row[0][1]}, {row[1][0]} = {row[1][1]}]")
             j += 1
             if j > 9:
                 i += 1

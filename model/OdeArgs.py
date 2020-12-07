@@ -17,6 +17,7 @@ class OdeArgs:
         self.__tn = None
         self.__At = None
         self.timeline = None
+        self.__delta = 0
 
     def set_s1(self, s1):
         print('S1 is set to: ' + str(s1))
@@ -26,7 +27,7 @@ class OdeArgs:
         if self.get_t0() == self.get_tn():
             self.timeline = np.linspace(0, self.get_tn(), 2, True)
         else:
-            self.timeline = np.linspace(self.get_t0(), self.get_tn(), 45, True)
+            self.timeline = np.linspace(self.get_t0(), self.get_tn(),30)
         return self.timeline
 
     def get_s1(self):
@@ -116,3 +117,12 @@ class OdeArgs:
 
     def get_at_keys(self):
         return ['A1(t)', 'A2(t)', 'A3(t)', 'A4(t)', 'A5(t)']
+
+    def set_STP(self, delta):
+        print(f"set STP to {delta}")
+        if delta < 0 or delta > 1:
+            raise Exception('Delta is set ' + delta + ', when valid range is [0 - 1]')
+        self.__delta = delta
+
+    def get_STP(self):
+        return self.__delta
